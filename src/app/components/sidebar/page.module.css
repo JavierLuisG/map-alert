@@ -100,8 +100,8 @@
 
     .sidebar_btn {
         gap: 0em;
-        display: flex;
         justify-content: space-between;
+        align-items: center;
     }
 
     .sidebar_btn:hover {

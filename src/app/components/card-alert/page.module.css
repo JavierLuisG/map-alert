@@ -15,6 +15,7 @@
   cursor: pointer;
   transition: box-shadow 0.12s ease, transform 0.06s ease;
   min-height: 68px;
+  width: 26em;
   box-sizing: border-box;
 }
 
@@ -144,9 +145,7 @@
 /* --- Responsive --- */
 @media (max-width: 768px) {
   .card_container {
-    padding: 10px;
     gap: 8px;
-    min-width: 27em;
   }
 
   .title {
