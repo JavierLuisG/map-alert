@@ -2,8 +2,7 @@
 
 import React, { useRef } from "react";
 import styles from "./page.module.css";
-
-import CardAlert from "../../components/card-alert/page.jsx";
+import CardAlert from "../../components/card-alert/CardAlert.jsx";
 import { mockAlerts } from "../../../mocks/alerts";
 
 const Alerts = () => {
