@@ -13,24 +13,22 @@ const MainLayout = ({ children }) => {
   const isRoot = pathname === "/";
 
   return (
-    <div>
-      <main className={styles.main_container}>
-        <div className={styles.section_sidebar}>
-          <Sidebar />
-        </div>
-        <section className={styles.section_content}>
-          <div
+    <main className={styles.main_container}>
+      <div className={styles.section_sidebar}>
+        <Sidebar />
+      </div>
+      <section className={styles.section_content}>
+        <div
           className={`${styles.section_panel} ${!isRoot ? styles.open : ""}`}
           aria-hidden={isRoot ? "true" : "false"}
         >
           {children}
         </div>
-          <div className={styles.section_map}>
-            <Map />
-          </div>
-        </section>
-      </main>
-    </div>
+        <div className={styles.section_map}>
+          <Map />
+        </div>
+      </section>
+    </main>
   );
 };
 

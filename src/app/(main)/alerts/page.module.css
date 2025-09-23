@@ -1,0 +1,18 @@
+.scroll_container {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.container_cards {
+  padding: 0.6em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+
+@media (max-width: 768px) {
+  .container_cards {
+    flex-direction: row;
+    padding: 0.6em 0em;
+  }
+}

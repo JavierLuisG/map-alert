@@ -1,12 +1,28 @@
-"use client"
+"use client";
 
-import React from 'react'
-import styles from './page.module.css'
+import React, { useRef } from "react";
+import styles from "./page.module.css";
+
+import CardAlert from "../../components/card-alert/page.jsx";
+import { mockAlerts } from "../../../mocks/alerts";
 
 const Alerts = () => {
-  return (
-    <div>Alerts</div>
-  )
-}
+  const containerRef = useRef(null);
 
-export default Alerts
+  return (
+    <div
+      className={styles.scroll_container}
+      ref={containerRef}
+      role="region"
+      aria-label="Lista de alertas"
+    >
+      <section className={styles.container_cards}>
+        {mockAlerts.map((alert) => (
+          <CardAlert key={alert.id} alert={alert} />
+        ))}
+      </section>
+    </div>
+  );
+};
+
+export default Alerts;
