@@ -2,30 +2,29 @@
 
 import React, { useState, useEffect } from "react";
 import { alertTypeOptions, getDescriptionsForType } from "../../data/alertType";
-import { level as levelOptions } from "../../data/alertLevel"; // tu archivo level existente
+import { level as levelOptions } from "../../data/alertLevel";
 import styles from "./page.module.css";
 
 const AddAlert = () => {
-  const [type, setType] = useState(""); // ej: "incendio"
-  const [description, setDescription] = useState(""); // ej: "Fuga de gas..."
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
   const [otherText, setOtherText] = useState("");
-  const [level, setLevel] = useState(levelOptions[0] || "low");
+  const [priority, setPriority] = useState("");
   const [address, setAddress] = useState("");
   const [coords, setCoords] = useState(null);
 
-  // cuando cambia type, limpiar description
   useEffect(() => {
     setDescription("");
     setOtherText("");
-  }, [type]);
+  }, [category]);
 
-  // Intento simple de geolocalización (si el usuario no pone dirección)
-  const useCurrentLocation = async () => {
+  const useCurrentLocation = () => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
         setCoords({ lat: latitude, lng: longitude });
+        setAddress(`Lat: ${latitude.toFixed(5)}, Lng: ${longitude.toFixed(5)}`);
       },
       (err) => {
         console.warn("No se pudo obtener geolocalización:", err.message);
@@ -33,119 +32,130 @@ const AddAlert = () => {
     );
   };
 
-  // Submit: arma el objeto final (aquí puedes enviarlo a Firebase)
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const finalDescription = description === "Otro" ? otherText : description;
 
     const newAlert = {
       id: Date.now().toString(),
-      type: type || null,
+      category: category || null,
       description: finalDescription || null,
-      level,
-      locationText: address || (coords ? "Ubicación actual" : null),
+      priority,
+      address,
       coordinates: coords,
       createdAt: new Date().toISOString(),
-      // mapImage: // aquí podrías generar la static map y guardarla
     };
 
     console.log("NEW ALERT ->", newAlert);
-    // TODO: enviar a tu API / Firebase
     alert("Alerta preparada en consola (ver devtools).");
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{ maxWidth: 800, margin: "0 auto", padding: 12 }}
-    >
-      <h2>Reportar nueva alerta</h2>
+    <div className={styles.form_wrapper}>
+      <h2 className={styles.form_title}>Reportar nueva alerta</h2>
 
-      <label>
-        Tipo (categoría)
-        <select value={type} onChange={(e) => setType(e.target.value)} required>
-          <option value="">-- Selecciona tipo --</option>
-          {alertTypeOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
+      <form onSubmit={handleSubmit} className={styles.form}>
+        {/* Categoría */}
+        <div className={styles.form_group}>
+          <label htmlFor="category">Categoría *</label>
+          <select
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
+          >
+            <option value="" disabled hidden>
+              Selecciona categoría
             </option>
-          ))}
-        </select>
-      </label>
+            {alertTypeOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <br />
-
-      <label>
-        Descripción
-        <select
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          disabled={!type}
-          required
-        >
-          <option value="">
-            {type ? "-- Elige descripción --" : "Primero elige tipo"}
-          </option>
-          {getDescriptionsForType(type).map((d) => (
-            <option key={d} value={d}>
-              {d}
+        {/* Descripción */}
+        <div className={styles.form_group}>
+          <label htmlFor="description">Descripción *</label>
+          <select
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            disabled={!category}
+            required
+          >
+            <option value="" disabled hidden>
+              {category ? "Selecciona descripción" : "Primero elige categoría"}
             </option>
-          ))}
-        </select>
-      </label>
+            {getDescriptionsForType(category).map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      {description === "Otro" && (
-        <>
-          <br />
-          <label>
-            Especificar (otro)
+        {description === "Otro" && (
+          <div className={styles.form_group}>
+            <label htmlFor="other">Especificar *</label>
             <input
+              id="other"
               type="text"
               value={otherText}
               onChange={(e) => setOtherText(e.target.value)}
               placeholder="Describe brevemente"
               required
             />
-          </label>
-        </>
-      )}
+          </div>
+        )}
 
-      <br />
-
-      <label>
-        Nivel (severity)
-        <select value={level} onChange={(e) => setLevel(e.target.value)}>
-          {levelOptions.map((lv) => (
-            <option key={lv} value={lv}>
-              {lv}
+        {/* Nivel de prioridad */}
+        <div className={styles.form_group}>
+          <label htmlFor="priority">Nivel de prioridad *</label>
+          <select
+            id="priority"
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            required
+          >
+            <option value="" disabled hidden>
+              Selecciona una opción
             </option>
-          ))}
-        </select>
-      </label>
+            {levelOptions.map((lv) => (
+              <option key={lv} value={lv}>
+                {lv}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <br />
+        {/* Dirección */}
+        <div className={styles.form_group}>
+          <label htmlFor="address">Dirección *</label>
+          <div className={styles.address_group}>
+            <input
+              id="address"
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Ej: Calle 123 #45-67"
+              required
+            />
+            <span className={styles.location_link} onClick={useCurrentLocation}>
+              Usar ubicación actual
+            </span>
+          </div>
+        </div>
 
-      <label>
-        Dirección (opcional)
-        <input
-          type="text"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          placeholder="Ej: Calle 123 #45-67"
-        />
-      </label>
-
-      <div style={{ marginTop: 8 }}>
-        <button type="button" onClick={useCurrentLocation}>
-          Usar ubicación actual
-        </button>
-      </div>
-
-      <div style={{ marginTop: 12 }}>
-        <button type="submit">Enviar alerta</button>
-      </div>
-    </form>
+        {/* Submit */}
+        <div className={styles.form_actions}>
+          <button type="submit" className={styles.submit_btn}>
+            Enviar alerta
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 
