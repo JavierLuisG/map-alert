@@ -90,6 +90,5 @@
     height: var(--panel-height-mobile);
     max-height: calc(100dvh - var(--sidebar-height, 56px));
     overflow-y: auto;
-    padding: 0em 0.5em;
   }
 }

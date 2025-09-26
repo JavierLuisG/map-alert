@@ -1,147 +1,39 @@
-.scrollShadow {
-    min-width: 25em;
-    max-height: inherit;
-}
-
-/* ===== General ===== */
-.form_wrapper {
-    padding: 1rem;
+.report_container {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
     min-width: 25em;
     max-height: inherit;
-    overflow-y: auto;
+    /* overflow-y: auto; */
+    overflow: hidden;
 }
 
-.form_title {
+.title {
+    max-width: 25em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.5rem 1rem 1.3rem 1rem;
+    background-color: var(--color-zinc-100);
+}
+
+.subtitle {
     margin: 0;
     font-size: 1.7rem;
     font-weight: 700;
     color: var(--color-text-primary);
 }
 
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.form_group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-}
-
-.form_group label {
-    font-size: 1rem;
-    font-weight: 500;
-}
-
-/* Cuando el select tiene value vacío */
-.form_group select:invalid {
-    color: var(--color-zinc-600);
-}
-
-/* ===== Inputs y Select ===== */
-.form_group select,
-.form_group input {
-    width: 100%;
-    padding: 0.5rem 2rem 0.5rem 0.7rem;
-    /* más padding a la derecha */
-    border: 1px solid var(--color-border);
-    border-radius: 0.3rem;
-    font-size: 0.95rem;
-    outline: none;
-    cursor: pointer;
-    background: var(--color-primary) url("data:image/svg+xml;utf8,<svg fill='%2371717A' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>") no-repeat right 0.7rem center;
-    background-size: 1rem;
-    color: var(--color-text-primary);
-    appearance: none;
-    /* quitar flecha por defecto */
-}
-
-.form_group select:focus,
-.form_group input:focus {
-    border-color: var(--color-bg-secondary);
-}
-
-.form_group select option:checked {
-    background: var(--color-blue-50);
-    color: var(--color-text-primary);
-}
-
-/* ===== Dirección + ubicación actual ===== */
-.address_group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    align-items: center;
-}
-
-.address_group input {
-    flex: 2;
-}
-
-.location_link {
-    flex: 1;
-    font-size: 0.9rem;
-    color: var(--color-zinc-700);
-    cursor: pointer;
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.location_link:hover {
-    color: var(--color-bg-secondary);
-    text-decoration: underline;
-}
-
-/* ===== Submit ===== */
-.form_actions {
-    margin-top: 1.2rem;
-}
-
-.submit_btn {
-    width: 100%;
-    padding: 0.5rem;
-    background: var(--color-bg-secondary);
-    color: var(--color-primary);
-    border: none;
-    border-radius: 0.4rem;
-    font-size: 1.2rem;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.submit_btn:hover {
-    color: var(--color-bg-secondary);
-    background: var(--color-primary);
-    border: 2px solid var(--color-bg-secondary);
-}
-
-/* ===== Mobile ===== */
 @media (max-width: 768px) {
-    .scrollShadow {
+    .report_container {
         min-width: 100%;
     }
 
-    .form_wrapper {
-        padding: 0.8rem;
-        min-width: 100%;
+    .title {
+        max-width: 100%;
+        padding: 1rem;
     }
 
-    .form_title {
+    .subtitle {
         font-size: 1.4rem;
-    }
-
-    .address_group {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .location_link {
-        margin-top: 0.3rem;
-        text-align: right;
     }
 }
