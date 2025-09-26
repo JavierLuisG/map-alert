@@ -1,3 +1,8 @@
+.scrollShadow {
+    min-width: 25em;
+    max-height: inherit;
+}
+
 /* ===== General ===== */
 .form_wrapper {
     padding: 1rem;
@@ -5,7 +10,7 @@
     flex-direction: column;
     gap: 1rem;
     min-width: 25em;
-    height: 100%;
+    max-height: inherit;
     overflow-y: auto;
 }
 
@@ -35,7 +40,7 @@
 
 /* Cuando el select tiene value vacío */
 .form_group select:invalid {
-  color: var(--color-zinc-600);
+    color: var(--color-zinc-600);
 }
 
 /* ===== Inputs y Select ===== */
@@ -117,6 +122,10 @@
 
 /* ===== Mobile ===== */
 @media (max-width: 768px) {
+    .scrollShadow {
+        min-width: 100%;
+    }
+
     .form_wrapper {
         padding: 0.8rem;
         min-width: 100%;

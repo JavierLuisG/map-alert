@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { alertTypeOptions, getDescriptionsForType } from "../../data/alertType";
 import { level as levelOptions } from "../../data/alertLevel";
 import styles from "./page.module.css";
+import { ScrollShadow } from "@heroui/react";
 
 const AddAlert = () => {
   const [category, setCategory] = useState("");
@@ -51,111 +52,118 @@ const AddAlert = () => {
   };
 
   return (
-    <div className={styles.form_wrapper}>
-      <h2 className={styles.form_title}>Reportar nueva alerta</h2>
-
-      <form onSubmit={handleSubmit} className={styles.form}>
-        {/* Categoría */}
-        <div className={styles.form_group}>
-          <label htmlFor="category">Categoría *</label>
-          <select
-            id="category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            required
-          >
-            <option value="" disabled hidden>
-              Selecciona categoría
-            </option>
-            {alertTypeOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Descripción */}
-        <div className={styles.form_group}>
-          <label htmlFor="description">Descripción *</label>
-          <select
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            disabled={!category}
-            required
-          >
-            <option value="" disabled hidden>
-              {category ? "Selecciona descripción" : "Primero elige categoría"}
-            </option>
-            {getDescriptionsForType(category).map((d) => (
-              <option key={d} value={d}>
-                {d}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {description === "Otro" && (
+    <ScrollShadow className={styles.scrollShadow}>
+      <div className={styles.form_wrapper}>
+        <h2 className={styles.form_title}>Reportar nueva alerta</h2>
+        
+        <form onSubmit={handleSubmit} className={styles.form}>
+          {/* Categoría */}
           <div className={styles.form_group}>
-            <label htmlFor="other">Especificar *</label>
-            <input
-              id="other"
-              type="text"
-              value={otherText}
-              onChange={(e) => setOtherText(e.target.value)}
-              placeholder="Describe brevemente"
+            <label htmlFor="category">Categoría *</label>
+            <select
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
               required
-            />
-          </div>
-        )}
-
-        {/* Nivel de prioridad */}
-        <div className={styles.form_group}>
-          <label htmlFor="priority">Nivel de prioridad *</label>
-          <select
-            id="priority"
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-            required
-          >
-            <option value="" disabled hidden>
-              Selecciona una opción
-            </option>
-            {levelOptions.map((lv) => (
-              <option key={lv} value={lv}>
-                {lv}
+            >
+              <option value="" disabled hidden>
+                Selecciona categoría
               </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Dirección */}
-        <div className={styles.form_group}>
-          <label htmlFor="address">Dirección *</label>
-          <div className={styles.address_group}>
-            <input
-              id="address"
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="Ej: Calle 123 #45-67"
-              required
-            />
-            <span className={styles.location_link} onClick={useCurrentLocation}>
-              Usar ubicación actual
-            </span>
+              {alertTypeOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           </div>
-        </div>
 
-        {/* Submit */}
-        <div className={styles.form_actions}>
-          <button type="submit" className={styles.submit_btn}>
-            Enviar alerta
-          </button>
-        </div>
-      </form>
-    </div>
+          {/* Descripción */}
+          <div className={styles.form_group}>
+            <label htmlFor="description">Descripción *</label>
+            <select
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              disabled={!category}
+              required
+            >
+              <option value="" disabled hidden>
+                {category
+                  ? "Selecciona descripción"
+                  : "Primero elige categoría"}
+              </option>
+              {getDescriptionsForType(category).map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {description === "Otro" && (
+            <div className={styles.form_group}>
+              <label htmlFor="other">Especificar *</label>
+              <input
+                id="other"
+                type="text"
+                value={otherText}
+                onChange={(e) => setOtherText(e.target.value)}
+                placeholder="Describe brevemente"
+                required
+              />
+            </div>
+          )}
+
+          {/* Nivel de prioridad */}
+          <div className={styles.form_group}>
+            <label htmlFor="priority">Nivel de prioridad *</label>
+            <select
+              id="priority"
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              required
+            >
+              <option value="" disabled hidden>
+                Selecciona una opción
+              </option>
+              {levelOptions.map((lv) => (
+                <option key={lv} value={lv}>
+                  {lv}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Dirección */}
+          <div className={styles.form_group}>
+            <label htmlFor="address">Dirección *</label>
+            <div className={styles.address_group}>
+              <input
+                id="address"
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Ej: Calle 123 #45-67"
+                required
+              />
+              <span
+                className={styles.location_link}
+                onClick={useCurrentLocation}
+              >
+                Usar ubicación actual
+              </span>
+            </div>
+          </div>
+
+          {/* Submit */}
+          <div className={styles.form_actions}>
+            <button type="submit" className={styles.submit_btn}>
+              Enviar alerta
+            </button>
+          </div>
+        </form>
+      </div>
+    </ScrollShadow>
   );
 };
 
