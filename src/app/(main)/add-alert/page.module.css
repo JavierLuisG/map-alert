@@ -3,11 +3,10 @@
     flex-direction: column;
     min-width: 25em;
     max-height: inherit;
-    /* overflow-y: auto; */
     overflow: hidden;
 }
 
-.title {
+.title_container {
     max-width: 25em;
     display: flex;
     flex-direction: column;
@@ -16,11 +15,15 @@
     background-color: var(--color-zinc-100);
 }
 
-.subtitle {
+.title {
     margin: 0;
-    font-size: 1.7rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: var(--color-text-primary);
+}
+
+.subtitle {
+    font-size: 0.9rem;
 }
 
 @media (max-width: 768px) {
