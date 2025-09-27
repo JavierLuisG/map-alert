@@ -9,15 +9,14 @@ import {
   InfoWindow,
 } from "@react-google-maps/api";
 import { getAlerts } from "../../../service/alerts";
-import { OverlayView } from "@react-google-maps/api";
 
 const containerStyle = { width: "100%", height: "100%" };
 
 // Colores por prioridad (icono del marker)
 const priorityColors = {
-  Alta: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-  Media: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png",
-  Baja: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+  Alta: "red",
+  Media: "orange",
+  Baja: "yellow",
 };
 
 // Estilo para limpiar el mapa
@@ -91,34 +90,21 @@ const Map = () => {
         {alerts.map(
           (alert) =>
             alert.coordinates && (
-              // <Marker
-              //   key={alert.id}
-              //   position={{
-              //     lat: alert.coordinates.lat,
-              //     lng: alert.coordinates.lng,
-              //   }}
-              //   onClick={() => setActiveAlert(alert)}
-              //   icon={priorityColors[alert.priority] || undefined}
-              // />
-              <OverlayView
+              <Marker
                 key={alert.id}
                 position={{
                   lat: alert.coordinates.lat,
                   lng: alert.coordinates.lng,
                 }}
-                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-              >
-                <div
-                  className={`${styles.pulse_marker} ${
-                    alert.priority === "Alta"
-                      ? styles.red
-                      : alert.priority === "Media"
-                      ? styles.orange
-                      : styles.yellow
-                  }`}
-                  onClick={() => setActiveAlert(alert)}
-                />
-              </OverlayView>
+                onClick={() => setActiveAlert(alert)}
+                icon={{
+                  path: window.google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+                  fillColor: priorityColors[alert.priority],
+                  fillOpacity: 1,
+                  strokeWeight: 1,
+                  scale: 6,
+                }}
+              />
             )
         )}
 
