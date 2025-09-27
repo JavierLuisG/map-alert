@@ -9,6 +9,7 @@ import {
   InfoWindow,
 } from "@react-google-maps/api";
 import { getAlerts } from "../../../service/alerts";
+import { OverlayView } from "@react-google-maps/api";
 
 const containerStyle = { width: "100%", height: "100%" };
 
@@ -90,27 +91,34 @@ const Map = () => {
         {alerts.map(
           (alert) =>
             alert.coordinates && (
-              <Marker
+              // <Marker
+              //   key={alert.id}
+              //   position={{
+              //     lat: alert.coordinates.lat,
+              //     lng: alert.coordinates.lng,
+              //   }}
+              //   onClick={() => setActiveAlert(alert)}
+              //   icon={priorityColors[alert.priority] || undefined}
+              // />
+              <OverlayView
                 key={alert.id}
                 position={{
                   lat: alert.coordinates.lat,
                   lng: alert.coordinates.lng,
                 }}
-                onClick={() => setActiveAlert(alert)}
-                // icon={priorityColors[alert.priority] || undefined}
-                icon={{
-                  path: window.google.maps.SymbolPath.CIRCLE,
-                  scale: 10, // tamaño fijo visible
-                  fillColor:
+                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+              >
+                <div
+                  className={`${styles.pulse_marker} ${
                     alert.priority === "Alta"
-                      ? "red"
+                      ? styles.red
                       : alert.priority === "Media"
-                      ? "orange"
-                      : "green",
-                  fillOpacity: 0.9,
-                  strokeWeight: 1,
-                }}
-              />
+                      ? styles.orange
+                      : styles.yellow
+                  }`}
+                  onClick={() => setActiveAlert(alert)}
+                />
+              </OverlayView>
             )
         )}
 
