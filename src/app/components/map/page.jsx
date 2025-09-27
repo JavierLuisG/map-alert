@@ -8,34 +8,22 @@ import {
   Marker,
   InfoWindow,
 } from "@react-google-maps/api";
-import { getAlerts } from "../../../service/alerts";
+
+import { db } from "../../../service/firebase"; 
+import { collection, onSnapshot } from "firebase/firestore";
 
 const containerStyle = { width: "100%", height: "100%" };
 
-// Colores por prioridad (icono del marker)
 const priorityColors = {
   Alta: "red",
   Media: "orange",
   Baja: "yellow",
 };
 
-// Estilo para limpiar el mapa
 const mapStyles = [
-  {
-    featureType: "poi",
-    elementType: "labels",
-    stylers: [{ visibility: "off" }],
-  },
-  {
-    featureType: "transit",
-    elementType: "labels",
-    stylers: [{ visibility: "off" }],
-  },
-  {
-    featureType: "road",
-    elementType: "labels.icon",
-    stylers: [{ visibility: "off" }],
-  },
+  { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
+  { featureType: "transit", elementType: "labels", stylers: [{ visibility: "off" }] },
+  { featureType: "road", elementType: "labels.icon", stylers: [{ visibility: "off" }] },
 ];
 
 const fallbackCenter = { lat: 4.711, lng: -74.0721 }; // Bogotá
@@ -48,7 +36,6 @@ const Map = () => {
 
   const mapApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-  // Obtener ubicación actual
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -65,13 +52,16 @@ const Map = () => {
     }
   }, []);
 
-  // Traer alertas
   useEffect(() => {
-    async function fetchAlerts() {
-      const data = await getAlerts();
+    const unsub = onSnapshot(collection(db, "alerts"), (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
       setAlerts(data);
-    }
-    fetchAlerts();
+    });
+
+    return () => unsub();
   }, []);
 
   const handleMapLoad = (mapInstance) => {
