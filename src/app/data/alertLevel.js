@@ -1,5 +1,5 @@
 export const level = [
-  "Bajo",
-  "Medio",
-  "Alto"
+  "Baja",
+  "Media",
+  "Alta"
 ];

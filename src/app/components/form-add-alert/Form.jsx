@@ -5,8 +5,16 @@ import { alertTypeOptions, getDescriptionsForType } from "../../data/alertType";
 import { level as levelOptions } from "../../data/alertLevel";
 import styles from "./page.module.css";
 import { ScrollShadow } from "@heroui/react";
+import { createAlert } from "../../../service/alerts";
 
-const Form = () => {
+// Colores según prioridad
+const priorityColors = {
+  Alta: "red",
+  Media: "orange",
+  Baja: "green",
+};
+
+const Form = ({ onAlertCreated }) => {
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [otherText, setOtherText] = useState("");
@@ -19,6 +27,7 @@ const Form = () => {
     setOtherText("");
   }, [category]);
 
+  // Obtener ubicación actual del navegador
   const useCurrentLocation = () => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
@@ -33,24 +42,73 @@ const Form = () => {
     );
   };
 
-  const handleSubmit = (e) => {
+  // Submit
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const finalDescription = description === "Otro" ? otherText : description;
+    try {
+      const finalDescription = description === "Otro" ? otherText : description;
 
-    const newAlert = {
-      id: Date.now().toString(),
-      category: category || null,
-      description: finalDescription || null,
-      priority,
-      address,
-      coordinates: coords,
-      createdAt: new Date().toISOString(),
-    };
+      const payload = {};
+      if (coords?.lat && coords?.lng) {
+        payload.lat = coords.lat;
+        payload.lng = coords.lng;
+      } else if (address) {
+        payload.address = address;
+      }
 
-    console.log("NEW ALERT ->", newAlert);
-    alert("Alerta preparada en consola (ver devtools).");
+      const geocodeRes = await fetch("/api/geocode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!geocodeRes.ok) {
+        const err = await geocodeRes.json();
+        console.error("Geocoding error", err);
+        alert("No se pudo obtener datos de ubicación. Intenta de nuevo.");
+        return;
+      }
+
+      const geo = await geocodeRes.json();
+
+      const finalCoords =
+        geo.lat && geo.lng ? { lat: geo.lat, lng: geo.lng } : coords;
+      const finalAddress = geo.formattedAddress || address;
+
+      const alertObj = {
+        category: category || null,
+        description: finalDescription || null,
+        priority,
+        address: finalAddress || null,
+        city: geo.city || null,
+        neighborhood: geo.neighborhood || null,
+        street: geo.street || null,
+        coordinates: finalCoords || null,
+        createdAt: new Date().toISOString(),
+      };
+
+      const newId = await createAlert(alertObj);
+
+      alert("Alerta creada (id: " + newId + ")");
+
+      // Si el padre pasa un callback, se lo notificamos
+      if (onAlertCreated) {
+        onAlertCreated({ id: newId, ...alertObj });
+      }
+
+      // Reset form
+      setCategory("");
+      setDescription("");
+      setOtherText("");
+      setPriority("");
+      setAddress("");
+      setCoords(null);
+    } catch (err) {
+      console.error(err);
+      alert("Error al crear la alerta.");
+    }
   };
-  
+
   return (
     <ScrollShadow className={styles.scrollShadow}>
       <form onSubmit={handleSubmit} className={styles.form}>
@@ -117,12 +175,17 @@ const Form = () => {
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
             required
+            style={{ color: priorityColors[priority] || "black" }}
           >
             <option value="" disabled hidden>
               Selecciona una opción
             </option>
             {levelOptions.map((lv) => (
-              <option key={lv} value={lv}>
+              <option
+                key={lv}
+                value={lv}
+                style={{ color: priorityColors[lv] }}
+              >
                 {lv}
               </option>
             ))}

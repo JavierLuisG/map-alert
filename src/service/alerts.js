@@ -9,5 +9,6 @@ export async function getAlerts() {
 }
 
 export async function createAlert(alert) {
-  await addDoc(alertsCollection, alert);
+  const docRef = await addDoc(alertsCollection, alert);
+  return docRef.id;
 }

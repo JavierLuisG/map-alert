@@ -1,18 +1,71 @@
 "use client";
 
-import React from "react";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import styles from "./page.module.css";
+import {
+  GoogleMap,
+  LoadScript,
+  Marker,
+  InfoWindow,
+} from "@react-google-maps/api";
 import { getAlerts } from "../../../service/alerts";
+
+const containerStyle = { width: "100%", height: "100%" };
+
+// Colores por prioridad (icono del marker)
+const priorityColors = {
+  Alta: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+  Media: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png",
+  Baja: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+};
+
+// Estilo para limpiar el mapa
+const mapStyles = [
+  {
+    featureType: "poi",
+    elementType: "labels",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "transit",
+    elementType: "labels",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "road",
+    elementType: "labels.icon",
+    stylers: [{ visibility: "off" }],
+  },
+];
+
+const fallbackCenter = { lat: 4.711, lng: -74.0721 }; // Bogotá
 
 const Map = () => {
   const [map, setMap] = useState(null);
   const [alerts, setAlerts] = useState([]);
+  const [center, setCenter] = useState(fallbackCenter);
+  const [activeAlert, setActiveAlert] = useState(null);
 
-  const defaultCenter = { lat: 4.711, lng: -74.0721 };
-  const containerStyle = { width: "100%", height: "100%" };
   const mapApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
+  // Obtener ubicación actual
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setCenter({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          });
+        },
+        () => {
+          console.warn("No se pudo obtener la ubicación, usando fallback.");
+        }
+      );
+    }
+  }, []);
+
+  // Traer alertas
   useEffect(() => {
     async function fetchAlerts() {
       const data = await getAlerts();
@@ -29,16 +82,47 @@ const Map = () => {
     <LoadScript googleMapsApiKey={mapApiKey}>
       <GoogleMap
         mapContainerStyle={containerStyle}
-        center={defaultCenter}
+        center={center}
         zoom={12}
         onLoad={handleMapLoad}
+        options={{ styles: mapStyles }}
       >
-        {alerts.map((alert) => (
-          <Marker
-            key={alert.id}
-            position={{ lat: alert.lat, lng: alert.lng }}
-          />
-        ))}
+        {alerts.map(
+          (alert) =>
+            alert.coordinates && (
+              <Marker
+                key={alert.id}
+                position={{
+                  lat: alert.coordinates.lat,
+                  lng: alert.coordinates.lng,
+                }}
+                icon={priorityColors[alert.priority] || undefined}
+                onClick={() => setActiveAlert(alert)}
+              />
+            )
+        )}
+
+        {activeAlert && (
+          <InfoWindow
+            position={{
+              lat: activeAlert.coordinates.lat,
+              lng: activeAlert.coordinates.lng,
+            }}
+            onCloseClick={() => setActiveAlert(null)}
+          >
+            <div className={styles.infowindow}>
+              <h3 className={styles.infowindow_title}>
+                {activeAlert.category}
+              </h3>
+              <p className={styles.infowindow_desc}>
+                {activeAlert.description}
+              </p>
+              <p className={styles.infowindow_priority}>
+                Prioridad: {activeAlert.priority}
+              </p>
+            </div>
+          </InfoWindow>
+        )}
       </GoogleMap>
     </LoadScript>
   );
