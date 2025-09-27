@@ -96,8 +96,20 @@ const Map = () => {
                   lat: alert.coordinates.lat,
                   lng: alert.coordinates.lng,
                 }}
-                icon={priorityColors[alert.priority] || undefined}
                 onClick={() => setActiveAlert(alert)}
+                // icon={priorityColors[alert.priority] || undefined}
+                icon={{
+                  path: window.google.maps.SymbolPath.CIRCLE,
+                  scale: 10, // tamaño fijo visible
+                  fillColor:
+                    alert.priority === "Alta"
+                      ? "red"
+                      : alert.priority === "Media"
+                      ? "orange"
+                      : "green",
+                  fillOpacity: 0.9,
+                  strokeWeight: 1,
+                }}
               />
             )
         )}
