@@ -3,7 +3,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import styles from "./page.module.css";
 import CardAlert from "../../components/card-alert/CardAlert.jsx";
-import { getAlerts } from "../../../service/alerts";
+import { db } from "../../../service/firebase"; 
+import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 
 const Alerts = () => {
   const containerRef = useRef(null);
@@ -11,18 +12,25 @@ const Alerts = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchAlerts = async () => {
-      try {
-        const data = await getAlerts();
+    const q = query(collection(db, "alerts"), orderBy("createdAt", "desc"));
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
         setAlerts(data);
-      } catch (error) {
-        console.error("Error al obtener alertas:", error);
-      } finally {
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Error en tiempo real:", error);
         setLoading(false);
       }
-    };
+    );
 
-    fetchAlerts();
+    return () => unsubscribe();
   }, []);
 
   return (
