@@ -7,7 +7,6 @@ import styles from "./page.module.css";
 import { ScrollShadow } from "@heroui/react";
 import { createAlert } from "../../../service/alerts";
 
-// Colores según prioridad
 const priorityColors = {
   Alta: "red",
   Media: "orange",
@@ -29,7 +28,10 @@ const Form = ({ onAlertCreated }) => {
 
   // Obtener ubicación actual del navegador
   const useCurrentLocation = () => {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      alert("Tu navegador no soporta geolocalización.");
+      return;
+    }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
@@ -38,6 +40,7 @@ const Form = ({ onAlertCreated }) => {
       },
       (err) => {
         console.warn("No se pudo obtener geolocalización:", err.message);
+        alert("No se pudo obtener datos de ubicación. Intenta de nuevo.");
       }
     );
   };
@@ -63,13 +66,17 @@ const Form = ({ onAlertCreated }) => {
       });
 
       if (!geocodeRes.ok) {
-        const err = await geocodeRes.json();
-        console.error("Geocoding error", err);
+        console.error("Geocoding error", await geocodeRes.text());
         alert("No se pudo obtener datos de ubicación. Intenta de nuevo.");
         return;
       }
 
       const geo = await geocodeRes.json();
+
+      if ((!geo.lat || !geo.lng) && !geo.formattedAddress) {
+        alert("No se pudo obtener datos de ubicación. Intenta de nuevo.");
+        return;
+      }
 
       const finalCoords =
         geo.lat && geo.lng ? { lat: geo.lat, lng: geo.lng } : coords;
@@ -79,10 +86,14 @@ const Form = ({ onAlertCreated }) => {
         category: category || null,
         description: finalDescription || null,
         priority,
-        address: finalAddress || null,
-        city: geo.city || null,
-        neighborhood: geo.neighborhood || null,
-        street: geo.street || null,
+        address: finalAddress || null,   // dirección completa
+        street: geo.street || null,      // calle
+        neighborhood: geo.neighborhood || null, // barrio / zona
+        city: geo.city || null,          // ciudad
+        department: geo.department || null, // departamento / estado
+        country: geo.country || null,    // país
+        postalCode: geo.postalCode || null, // opcional
+        placeId: geo.placeId || null,    // opcional
         coordinates: finalCoords || null,
         createdAt: new Date().toISOString(),
       };
@@ -91,7 +102,6 @@ const Form = ({ onAlertCreated }) => {
 
       alert("Alerta creada (id: " + newId + ")");
 
-      // Si el padre pasa un callback, se lo notificamos
       if (onAlertCreated) {
         onAlertCreated({ id: newId, ...alertObj });
       }
@@ -105,7 +115,7 @@ const Form = ({ onAlertCreated }) => {
       setCoords(null);
     } catch (err) {
       console.error(err);
-      alert("Error al crear la alerta.");
+      alert("No se pudo obtener datos de ubicación. Intenta de nuevo.");
     }
   };
 
@@ -175,7 +185,6 @@ const Form = ({ onAlertCreated }) => {
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
             required
-            style={{ color: priorityColors[priority] || "black" }}
           >
             <option value="" disabled hidden>
               Selecciona una opción
@@ -184,7 +193,6 @@ const Form = ({ onAlertCreated }) => {
               <option
                 key={lv}
                 value={lv}
-                style={{ color: priorityColors[lv] }}
               >
                 {lv}
               </option>

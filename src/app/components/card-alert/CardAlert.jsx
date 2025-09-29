@@ -3,24 +3,24 @@
 import React from "react";
 import styles from "./page.module.css";
 import { Link } from "@heroui/react";
-import { timeAgo } from "../../../utils/timeAgo"; // archivo util que crearemos
+import { timeAgo } from "../../../utils/timeAgo";
 
 const CardAlert = ({ alert }) => {
   const {
     id,
     description,
-    type,
-    level,
-    locationText,
+    category,
+    priority,
+    address,
     city,
     createdAt,
     mapImage,
   } = alert;
 
   const levelClass =
-    level === "high"
+    priority === "Alta"
       ? styles.high
-      : level === "medium"
+      : priority === "Media"
       ? styles.medium
       : styles.low;
 
@@ -44,17 +44,16 @@ const CardAlert = ({ alert }) => {
         {/* contenido principal */}
         <div className={styles.card_body}>
           <h3 id={`alert-title-${id}`} className={styles.title}>
-            {type ? type.charAt(0).toUpperCase() + type.slice(1) : "—"}
+            {category ? category.charAt(0).toUpperCase() + category.slice(1) : "—"}
           </h3>
-          <p id={`alert-title-${id}`} className={styles.text_description}>
-            {description}
-          </p>
+          <p className={styles.text_description}>{description}</p>
           <p className={styles.meta}>
             <span className={styles.location}>
-              {locationText || "Ubicación no especificada"}
+              {address || "Ubicación no especificada"}
             </span>
           </p>
         </div>
+
         <section className={styles.card_info_body}>
           <p className={styles.text_city}>{city}</p>
           <p className={styles.text_time}>{timeAgo(createdAt)}</p>

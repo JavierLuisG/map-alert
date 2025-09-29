@@ -47,6 +47,13 @@ export async function POST(req) {
       pickComponent(components, ["sublocality"]) ||
       null;
 
+    const department =
+      pickComponent(components, ["administrative_area_level_1"]) || null;
+
+    const country = pickComponent(components, ["country"]) || null;
+
+    const postalCode = pickComponent(components, ["postal_code"]) || null;
+
     const route = pickComponent(components, ["route"]);
     const street_number = pickComponent(components, ["street_number"]);
     const street = [route, street_number].filter(Boolean).join(" ").trim() || null;
@@ -58,6 +65,10 @@ export async function POST(req) {
       formattedAddress: result.formatted_address || null,
       city,
       neighborhood,
+      department,
+      country,
+      postalCode,
+      placeId: result.place_id || null,
       street,
       lat: location?.lat ?? null,
       lng: location?.lng ?? null,
