@@ -77,12 +77,15 @@
 
 /* meta (tipo · ubicación) */
 .meta {
+  display: flex;
+  flex-direction: column;
   margin: 0;
   font-size: 0.9rem;
   color: var(--text-muted, #6b7280);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1.1;
 }
 
 /* etiqueta tipo */
@@ -129,6 +132,7 @@
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
+  line-height: 1.1;
 }
 
 .text_city {
@@ -137,6 +141,7 @@
 }
 
 .text_time {
+  margin-top: 0.3rem;
   font-size: 0.9em !important;
   color: var(--color-text-quaternary) !important;
 }

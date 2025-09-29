@@ -11,7 +11,9 @@ const CardAlert = ({ alert }) => {
     description,
     category,
     priority,
-    address,
+    street,
+    neighborhood,
+    country,
     city,
     createdAt,
     mapImage,
@@ -49,12 +51,16 @@ const CardAlert = ({ alert }) => {
           <p className={styles.text_description}>{description}</p>
           <p className={styles.meta}>
             <span className={styles.location}>
-              {address || "Ubicación no especificada"}
+              {street || "Ubicación no especificada"}
+            </span>
+            <span className={styles.location}>
+              {neighborhood || "Ubicación no especificada"}
             </span>
           </p>
         </div>
 
         <section className={styles.card_info_body}>
+          <p>{country}</p>
           <p className={styles.text_city}>{city}</p>
           <p className={styles.text_time}>{timeAgo(createdAt)}</p>
         </section>
