@@ -1,7 +1,7 @@
 .detail_container {
     display: flex;
     flex-direction: column;
-    min-width: 25em;
+    width: 100%;
     max-height: inherit;
     overflow: hidden;
 }

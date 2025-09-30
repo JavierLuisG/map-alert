@@ -46,8 +46,8 @@
   --color-border-secondary: var(--color-zinc-400);
   --color-border-terniary: var(--color-zinc-500);
 
-  --sidebar-width: 4em;    
-  --panel-width: auto;    
+  --sidebar-width: 4em;
+  --panel-width: 27em;
   --panel-height-mobile: auto;
 }
 

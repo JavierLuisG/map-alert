@@ -15,7 +15,7 @@
   cursor: pointer;
   transition: box-shadow 0.12s ease, transform 0.06s ease;
   min-height: 68px;
-  width: 26em;
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -161,6 +161,7 @@
 
 @media (max-width: 768px) {
   .card_container {
+    width: 26em;
     gap: 8px;
   }
 
