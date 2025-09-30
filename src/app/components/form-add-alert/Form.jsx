@@ -86,14 +86,14 @@ const Form = ({ onAlertCreated }) => {
         category: category || null,
         description: finalDescription || null,
         priority,
-        address: finalAddress || null,   // dirección completa
-        street: geo.street || null,      // calle
-        neighborhood: geo.neighborhood || null, // barrio / zona
-        city: geo.city || null,          // ciudad
-        department: geo.department || null, // departamento / estado
-        country: geo.country || null,    // país
-        postalCode: geo.postalCode || null, // opcional
-        placeId: geo.placeId || null,    // opcional
+        address: finalAddress || null,
+        street: geo.street || null,
+        neighborhood: geo.neighborhood || null,
+        city: geo.city || null,
+        department: geo.department || null,
+        country: geo.country || null,
+        postalCode: geo.postalCode || null,
+        placeId: geo.placeId || null,
         coordinates: finalCoords || null,
         createdAt: new Date().toISOString(),
       };
@@ -106,7 +106,6 @@ const Form = ({ onAlertCreated }) => {
         onAlertCreated({ id: newId, ...alertObj });
       }
 
-      // Reset form
       setCategory("");
       setDescription("");
       setOtherText("");

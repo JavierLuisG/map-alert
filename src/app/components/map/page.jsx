@@ -1,16 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import styles from "./page.module.css";
-import {
-  GoogleMap,
-  LoadScript,
-  Marker,
-  InfoWindow,
-} from "@react-google-maps/api";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { db } from "../../../service/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 import { usePathname, useRouter } from "next/navigation";
+import Spinner from "../spinner/Spinner";
 
 const containerStyle = { width: "100%", height: "100%" };
 
@@ -38,7 +33,7 @@ const mapStyles = [
   },
 ];
 
-const fallbackCenter = { lat: 4.711, lng: -74.0721 }; // Bogotá fallback
+const fallbackCenter = { lat: 4.711, lng: -74.0721 };
 
 export default function Map() {
   const pathname = usePathname();
@@ -49,10 +44,10 @@ export default function Map() {
   const [alerts, setAlerts] = useState([]);
   const [center, setCenter] = useState(fallbackCenter);
   const [activeAlert, setActiveAlert] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const mapApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-  // Extraer id si la ruta es /detail/<id>
   const selectedId = React.useMemo(() => {
     if (!pathname) return null;
     const m = pathname.match(/\/detail\/([^/]+)/);
@@ -73,7 +68,6 @@ export default function Map() {
     return () => window.removeEventListener("alert-selected", handler);
   }, [alerts, map]);
 
-  // Obtener ubicación del navegador al iniciar
   useEffect(() => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
@@ -81,38 +75,36 @@ export default function Map() {
         setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
       },
       () => {
-        // si el usuario bloquea location, usamos fallback
         console.warn("No se pudo obtener la ubicación, usando fallback.");
       }
     );
   }, []);
 
-  // Escuchar Firestore en tiempo real (colección "alerts")
   useEffect(() => {
     const unsub = onSnapshot(
       collection(db, "alerts"),
       (snapshot) => {
         const data = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
         setAlerts(data);
+        setLoading(false);
       },
-      (err) => console.error("Firestore onSnapshot error:", err)
+      (err) => {
+        console.error("Firestore onSnapshot error:", err);
+        setLoading(false);
+      }
     );
 
     return () => unsub();
   }, []);
 
-  // Cuando cambie selectedId (por ejemplo al clicar una card -> navigate to /detail/:id),
-  // centrar el mapa en la alerta correspondiente y abrir su InfoWindow
   useEffect(() => {
     if (!selectedId || !map || alerts.length === 0) {
-      // si no hay selección, cerramos ventana
       if (!selectedId) setActiveAlert(null);
       return;
     }
     const found = alerts.find((a) => a.id === selectedId);
     if (found && found.coordinates) {
       const pos = { lat: found.coordinates.lat, lng: found.coordinates.lng };
-      // mover mapa suavemente
       map.panTo(pos);
       map.setZoom(15);
       setActiveAlert(found);
@@ -125,15 +117,17 @@ export default function Map() {
   };
 
   const handleMarkerClick = (alert) => {
-    // abrir InfoWindow y centrar
     setActiveAlert(alert);
     if (map && alert.coordinates) {
       map.panTo({ lat: alert.coordinates.lat, lng: alert.coordinates.lng });
       map.setZoom(15);
     }
-    // navegar a detail (esto actualizará URL y permitirá al layout/panel saber la selección)
     router.push(`/detail/${alert.id}`);
   };
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <LoadScript googleMapsApiKey={mapApiKey}>
@@ -155,7 +149,6 @@ export default function Map() {
               }}
               onClick={() => handleMarkerClick(alert)}
               icon={
-                // Protegemos el acceso a window.google por si aún no se ha cargado la lib
                 typeof window !== "undefined" && window.google
                   ? {
                       path: window.google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
@@ -169,29 +162,6 @@ export default function Map() {
             />
           ) : null
         )}
-        {/* 
-        {activeAlert && activeAlert.coordinates && (
-          <InfoWindow
-            position={{
-              lat: activeAlert.coordinates.lat,
-              lng: activeAlert.coordinates.lng,
-            }}
-            onCloseClick={() => setActiveAlert(null)}
-          >
-            <div className={styles.infowindow}>
-              <h3 className={styles.infowindow_title}>
-                {activeAlert.category?.charAt(0).toUpperCase() +
-                  (activeAlert.category?.slice(1) || "")}
-              </h3>
-              <p className={styles.infowindow_desc}>
-                {activeAlert.description}
-              </p>
-              <p className={styles.infowindow_priority}>
-                Prioridad: {activeAlert.priority}
-              </p>
-            </div>
-          </InfoWindow>
-        )} */}
       </GoogleMap>
     </LoadScript>
   );

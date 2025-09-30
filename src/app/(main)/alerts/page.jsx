@@ -3,8 +3,9 @@
 import React, { useRef, useState, useEffect } from "react";
 import styles from "./page.module.css";
 import CardAlert from "../../components/card-alert/CardAlert.jsx";
-import { db } from "../../../service/firebase"; 
+import { db } from "../../../service/firebase";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import Spinner from "../../components/spinner/Spinner";
 
 const Alerts = () => {
   const containerRef = useRef(null);
@@ -41,7 +42,7 @@ const Alerts = () => {
       aria-label="Lista de alertas"
     >
       {loading ? (
-        <p className={styles.loading}>Cargando alertas...</p>
+          <Spinner />
       ) : alerts.length === 0 ? (
         <p className={styles.empty}>No hay alertas creadas.</p>
       ) : (

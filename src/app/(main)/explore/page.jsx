@@ -2,10 +2,11 @@
 
 import React from 'react'
 import styles from './page.module.css'
+import Spinner from "../../components/spinner/Spinner.jsx"
 
 const Explore = () => {
   return (
-    <div>Explore</div>
+    <Spinner />
   )
 }
 
