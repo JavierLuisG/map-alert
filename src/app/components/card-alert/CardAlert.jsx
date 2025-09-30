@@ -2,10 +2,12 @@
 
 import React from "react";
 import styles from "./page.module.css";
-import { Link } from "@heroui/react";
 import { timeAgo } from "../../../utils/timeAgo";
+import { useRouter } from "next/navigation";
 
 const CardAlert = ({ alert }) => {
+  const router = useRouter();
+
   const {
     id,
     description,
@@ -19,6 +21,12 @@ const CardAlert = ({ alert }) => {
     mapImage,
   } = alert;
 
+  const handleClick = (e) => {
+    e.preventDefault();
+    router.push(`/detail/${alert.id}`); // actualiza URL
+    window.dispatchEvent(new CustomEvent("alert-selected", { detail: alert.id })); // dispara evento global
+  };
+
   const levelClass =
     priority === "Alta"
       ? styles.high
@@ -27,7 +35,8 @@ const CardAlert = ({ alert }) => {
       : styles.low;
 
   return (
-    <Link href={`/alerts/${id}`} className={styles.card_link}>
+    // <Link href={`/detail/${id}`} className={styles.card_link}>
+    <article className={styles.card_link} onClick={handleClick}>
       <article
         className={styles.card_container}
         aria-labelledby={`alert-title-${id}`}
@@ -71,7 +80,8 @@ const CardAlert = ({ alert }) => {
           aria-hidden="true"
         />
       </article>
-    </Link>
+    </article>
+    // </Link>
   );
 };
 
