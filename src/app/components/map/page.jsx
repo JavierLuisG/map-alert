@@ -9,7 +9,7 @@ import {
   InfoWindow,
 } from "@react-google-maps/api";
 
-import { db } from "../../../service/firebase"; 
+import { db } from "../../../service/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 
 const containerStyle = { width: "100%", height: "100%" };
@@ -36,6 +36,7 @@ const Map = () => {
 
   const mapApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
+  // Ubicación actual
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -52,6 +53,7 @@ const Map = () => {
     }
   }, []);
 
+  // Escuchar cambios en Firestore
   useEffect(() => {
     const unsub = onSnapshot(collection(db, "alerts"), (snapshot) => {
       const data = snapshot.docs.map((doc) => ({
@@ -87,13 +89,17 @@ const Map = () => {
                   lng: alert.coordinates.lng,
                 }}
                 onClick={() => setActiveAlert(alert)}
-                icon={{
-                  path: window.google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
-                  fillColor: priorityColors[alert.priority],
-                  fillOpacity: 1,
-                  strokeWeight: 1,
-                  scale: 6,
-                }}
+                icon={
+                  typeof window !== "undefined" && window.google
+                    ? {
+                        path: window.google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+                        fillColor: priorityColors[alert.priority],
+                        fillOpacity: 1,
+                        strokeWeight: 1,
+                        scale: 6,
+                      }
+                    : undefined
+                }
               />
             )
         )}
