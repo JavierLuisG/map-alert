@@ -26,18 +26,26 @@
   outline: none;
 }
 
-/* barra de color izquierda: nivel */
-.color_bar {
-  width: 6px;
-  height: 90px;
-  border-radius: 8px;
+.card_info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 0.3rem;
+  min-width: 0;
   flex-shrink: 0;
 }
 
-/* colores por nivel */
+/* barra de color izquierda: nivel */
+.color_bar {
+  width: 65px;
+  height: 1.1em;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
 .color_bar.low {
   background: rgba(255, 255, 0, 0.800);
-  /* suave */
 }
 
 .color_bar.medium {
@@ -52,7 +60,6 @@
 .card_body {
   flex: 1;
   min-width: 0;
-  /* crítico para truncado en flex */
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -70,7 +77,6 @@
 .text_description {
   margin: 0;
   font-size: 0.9rem;
-  line-height: 1;
   color: var(--text-primary, #111827);
   line-height: 1.1;
 }
@@ -133,20 +139,26 @@
   justify-content: flex-end;
   align-items: flex-end;
   line-height: 1.1;
+  gap: 0.3rem;
+}
+
+.text_country {
+  max-width: min-content;
+  text-align: end;
+  font-size: 0.9em !important;
 }
 
 .text_city {
-  font-size: 1em !important;
+  font-size: 0.9em !important;
   color: var(--color-text-primary);
+  font-weight: 600;
 }
 
 .text_time {
-  margin-top: 0.3rem;
   font-size: 0.9em !important;
   color: var(--color-text-quaternary) !important;
 }
 
-/* --- Responsive --- */
 @media (max-width: 768px) {
   .card_container {
     gap: 8px;

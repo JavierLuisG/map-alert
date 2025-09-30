@@ -1,15 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../../../service/firebase";
 import styles from "./page.module.css";
 import Link from "next/link";
+import DetailAlert from "../../../components/detail-alert/DetailAlert";
+import LeftLine from "../../../../assets/icons/arrow-left-line.svg";
 
 const Detail = () => {
   const params = useParams();
-  const router = useRouter();
   const id = params?.id;
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -41,43 +42,13 @@ const Detail = () => {
 
   return (
     <div className={styles.detail_container}>
-      <div style={{ marginBottom: 12 }}>
-        <Link href="/alerts">← Volver</Link>
+      <div className={styles.detail_header}>
+        <Link href="/alerts">
+          <LeftLine width={24} height={24} />
+        </Link>
+        <p>Regresar al listado de alertas</p>
       </div>
-
-      <h1>{alert.category ? alert.category.charAt(0).toUpperCase() + alert.category.slice(1) : "Alerta"}</h1>
-      <p style={{ fontWeight: 600 }}>{alert.description}</p>
-
-      <dl style={{ marginTop: 12 }}>
-        <dt>Dirección</dt>
-        <dd>{alert.address || "-"}</dd>
-
-        <dt>Calle</dt>
-        <dd>{alert.street || "-"}</dd>
-
-        <dt>Barrio</dt>
-        <dd>{alert.neighborhood || "-"}</dd>
-
-        <dt>Ciudad</dt>
-        <dd>{alert.city || "-"}</dd>
-
-        <dt>Departamento</dt>
-        <dd>{alert.department || "-"}</dd>
-
-        <dt>País</dt>
-        <dd>{alert.country || "-"}</dd>
-
-        <dt>Prioridad</dt>
-        <dd>{alert.priority || "-"}</dd>
-
-        <dt>Coordenadas</dt>
-        <dd>
-          {alert.coordinates ? `${alert.coordinates.lat}, ${alert.coordinates.lng}` : "-"}
-        </dd>
-
-        <dt>Creada</dt>
-        <dd>{alert.createdAt ? new Date(alert.createdAt).toLocaleString() : "-"}</dd>
-      </dl>
+      <DetailAlert alert={alert} />
     </div>
   );
 };

@@ -23,8 +23,10 @@ const CardAlert = ({ alert }) => {
 
   const handleClick = (e) => {
     e.preventDefault();
-    router.push(`/detail/${alert.id}`); // actualiza URL
-    window.dispatchEvent(new CustomEvent("alert-selected", { detail: alert.id })); // dispara evento global
+    router.push(`/detail/${alert.id}`);
+    window.dispatchEvent(
+      new CustomEvent("alert-selected", { detail: alert.id })
+    );
   };
 
   const levelClass =
@@ -35,7 +37,6 @@ const CardAlert = ({ alert }) => {
       : styles.low;
 
   return (
-    // <Link href={`/detail/${id}`} className={styles.card_link}>
     <article className={styles.card_link} onClick={handleClick}>
       <article
         className={styles.card_container}
@@ -55,7 +56,9 @@ const CardAlert = ({ alert }) => {
         {/* contenido principal */}
         <div className={styles.card_body}>
           <h3 id={`alert-title-${id}`} className={styles.title}>
-            {category ? category.charAt(0).toUpperCase() + category.slice(1) : "—"}
+            {category
+              ? category.charAt(0).toUpperCase() + category.slice(1)
+              : "—"}
           </h3>
           <p className={styles.text_description}>{description}</p>
           <p className={styles.meta}>
@@ -67,21 +70,19 @@ const CardAlert = ({ alert }) => {
             </span>
           </p>
         </div>
-
-        <section className={styles.card_info_body}>
-          <p>{country}</p>
-          <p className={styles.text_city}>{city}</p>
-          <p className={styles.text_time}>{timeAgo(createdAt)}</p>
-        </section>
-
-        {/* barra de color */}
-        <div
-          className={`${styles.color_bar} ${levelClass}`}
-          aria-hidden="true"
-        />
+        <div className={styles.card_info}>
+          <div
+            className={`${styles.color_bar} ${levelClass}`}
+            aria-hidden="true"
+          />
+          <section className={styles.card_info_body}>
+            <p className={styles.text_country}>{country}</p>
+            <p className={styles.text_city}>{city}</p>
+            <p className={styles.text_time}>{timeAgo(createdAt)}</p>
+          </section>
+        </div>
       </article>
     </article>
-    // </Link>
   );
 };
 
