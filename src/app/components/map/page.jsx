@@ -162,6 +162,19 @@ export default function Map() {
             />
           ) : null
         )}
+        {center && (
+          <Marker
+            position={center}
+            icon={{
+              path: window.google?.maps.SymbolPath.CIRCLE,
+              scale: 8,
+              fillColor: "#4285F4",
+              fillOpacity: 1,
+              strokeColor: "white",
+              strokeWeight: 2,
+            }}
+          />
+        )}
       </GoogleMap>
     </LoadScript>
   );
