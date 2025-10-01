@@ -1,28 +1,29 @@
 export const alertTypes = {
-  incendio: [
-    "Incendio en edificio/estructura",
-    "Incendio forestal o de vegetación",
-    "Fuga de gas detectada"
+  disparos: [
+    "Disparos en la zona",
+    "Confrontación entre bandas o grupos criminales",
+    "Disparos al aire con fines intimidatorios o festivos",
+    "Uso de armas de fuego en actos delictivos (robos, amenazas, etc.)"
   ],
-  accidente: [
-    "Accidente automovilístico con heridos",
-    "Accidente automovilístico sin heridos graves",
-    "Accidente de motocicleta"
+  propiedades: [
+    "Robo a viviendas o comercios",
+    "Allanamiento sin robo (intrusión ilegal)",
+    "Daños materiales (puertas, ventanas, vehículos)"
   ],
   robo: [
-    "Asalto a mano armada",
-    "Robo en establecimiento comercial",
-    "Robo de vehículo"
+    "Con arma blanca (cuchillos, navajas)",
+    "Con arma de fuego (pistolas, revólveres, etc.)",
+    "Con fuerza física o intimidación (sin armas)"
   ],
-  emergencia: [
-    "Persona herida en vía pública",
-    "Persona fallecida en vía pública",
-    "Disturbio o riña callejera"
+  vandalismo: [
+    "Daño a propiedad privada (viviendas, autos, negocios)",
+    "Grafitis no autorizados en muros o fachadas",
+    "Destrucción de mobiliario (ventanas, puertas, cámaras)"
   ],
-  desastre: [
-    "Inundación en zona urbana",
-    "Deslizamiento de tierra",
-    "Explosión o detonación sospechosa"
+  violencia: [
+    "Peleas callejeras entre individuos o grupos",
+    "Agresiones físicas a transeúntes o comerciantes",
+    "Amenazas o insultos violentos en espacios públicos"
   ],
   otro: ["Otro"]
 };

@@ -1,12 +1,15 @@
 "use client"
 
-import React from 'react'
-import styles from './page.module.css'
+import React from "react"
+import styles from "./page.module.css"
 
-const Spinner = () => {
+const Spinner = ({ size = "3em" }) => {
   return (
     <div className={styles.panel}>
-      <div className={styles.spinner}></div>
+      <div
+        className={styles.spinner}
+        style={{ width: size, height: size }}
+      ></div>
     </div>
   )
 }

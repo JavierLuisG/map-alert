@@ -6,12 +6,9 @@ import { level as levelOptions } from "../../data/alertLevel";
 import styles from "./page.module.css";
 import { ScrollShadow } from "@heroui/react";
 import { createAlert } from "../../../service/alerts";
-
-const priorityColors = {
-  Alta: "red",
-  Media: "orange",
-  Baja: "green",
-};
+import Spinner from "../../components/spinner/Spinner";
+import { Toast } from "../../../utils/toast";
+import { useRouter } from "next/navigation";
 
 const Form = ({ onAlertCreated }) => {
   const [category, setCategory] = useState("");
@@ -20,16 +17,21 @@ const Form = ({ onAlertCreated }) => {
   const [priority, setPriority] = useState("");
   const [address, setAddress] = useState("");
   const [coords, setCoords] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     setDescription("");
     setOtherText("");
   }, [category]);
 
-  // Obtener ubicación actual del navegador
   const useCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert("Tu navegador no soporta geolocalización.");
+      Toast.fire({
+        icon: "info",
+        title: "Tu navegador no soporta geolocalización.",
+      });
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -40,14 +42,17 @@ const Form = ({ onAlertCreated }) => {
       },
       (err) => {
         console.warn("No se pudo obtener geolocalización:", err.message);
-        alert("No se pudo obtener datos de ubicación. Intenta de nuevo.");
+        Toast.fire({
+          icon: "error",
+          title: "No se pudo obtener datos de ubicación. Intenta de nuevo.",
+        });
       }
     );
   };
 
-  // Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const finalDescription = description === "Otro" ? otherText : description;
 
@@ -67,14 +72,20 @@ const Form = ({ onAlertCreated }) => {
 
       if (!geocodeRes.ok) {
         console.error("Geocoding error", await geocodeRes.text());
-        alert("No se pudo obtener datos de ubicación. Intenta de nuevo.");
+        Toast.fire({
+          icon: "error",
+          title: "No se pudo obtener datos de ubicación. Intenta de nuevo.",
+        });
         return;
       }
 
       const geo = await geocodeRes.json();
 
       if ((!geo.lat || !geo.lng) && !geo.formattedAddress) {
-        alert("No se pudo obtener datos de ubicación. Intenta de nuevo.");
+        Toast.fire({
+          icon: "error",
+          title: "No se pudo obtener datos de ubicación. Intenta de nuevo.",
+        });
         return;
       }
 
@@ -100,7 +111,12 @@ const Form = ({ onAlertCreated }) => {
 
       const newId = await createAlert(alertObj);
 
-      alert("Alerta creada (id: " + newId + ")");
+      Toast.fire({
+        icon: "success",
+        title: "Alerta creada exitosamente.",
+      });
+
+      router.push(`/detail/${newId}`);
 
       if (onAlertCreated) {
         onAlertCreated({ id: newId, ...alertObj });
@@ -114,7 +130,12 @@ const Form = ({ onAlertCreated }) => {
       setCoords(null);
     } catch (err) {
       console.error(err);
-      alert("No se pudo obtener datos de ubicación. Intenta de nuevo.");
+      Toast.fire({
+        icon: "error",
+        title: "No se pudo obtener datos de ubicación. Intenta de nuevo.",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -189,10 +210,7 @@ const Form = ({ onAlertCreated }) => {
               Selecciona una opción
             </option>
             {levelOptions.map((lv) => (
-              <option
-                key={lv}
-                value={lv}
-              >
+              <option key={lv} value={lv}>
                 {lv}
               </option>
             ))}
@@ -219,8 +237,12 @@ const Form = ({ onAlertCreated }) => {
 
         {/* Submit */}
         <div className={styles.form_actions}>
-          <button type="submit" className={styles.submit_btn}>
-            Enviar alerta
+          <button
+            type="submit"
+            className={`${styles.submit_btn} ${loading ? styles.loading : ""}`}
+            disabled={loading}
+          >
+            {loading ? <Spinner size="1.5em" /> : "Enviar alerta"}
           </button>
         </div>
       </form>

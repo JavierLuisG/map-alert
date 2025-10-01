@@ -3,7 +3,6 @@ import { db } from "./firebase";
 
 const alertsCollection = collection(db, "alerts");
 
-// Obtener alertas ordenadas por fecha de creación (descendente)
 export async function getAlerts() {
   const q = query(alertsCollection, orderBy("createdAt", "desc"));
   const snapshot = await getDocs(q);
@@ -13,7 +12,6 @@ export async function getAlerts() {
   }));
 }
 
-// Crear una alerta nueva
 export async function createAlert(alert) {
   const newAlert = {
     ...alert,
@@ -21,5 +19,5 @@ export async function createAlert(alert) {
   };
 
   const docRef = await addDoc(alertsCollection, newAlert);
-  return { id: docRef.id, ...newAlert };
+  return docRef.id;
 }
