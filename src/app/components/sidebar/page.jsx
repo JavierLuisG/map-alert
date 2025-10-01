@@ -14,7 +14,7 @@ const Sidebar = () => {
 
   const placement = [
     { id: 1, icon: Reference, name: "Alerts", path: "/alerts" },
-    { id: 2, icon: Earth, name: "Map", path: "/explore" },
+    { id: 2, icon: Earth, name: "Map", path: "/" },
     { id: 3, icon: MageFilter, name: "Report", path: "/add-alert" },
   ];
 
