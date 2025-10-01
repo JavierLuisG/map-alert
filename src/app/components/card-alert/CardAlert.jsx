@@ -4,6 +4,7 @@ import React from "react";
 import styles from "./page.module.css";
 import { timeAgo } from "../../../utils/timeAgo";
 import { useRouter } from "next/navigation";
+import { alertImages } from "../../../utils/alertImages";
 
 const CardAlert = ({ alert }) => {
   const router = useRouter();
@@ -36,16 +37,21 @@ const CardAlert = ({ alert }) => {
       ? styles.medium
       : styles.low;
 
+  // Buscar imagen por categoría
+  const alertImage = category ? alertImages[category.toLowerCase()] : null;
+
   return (
     <article className={styles.card_link} onClick={handleClick}>
       <article
         className={styles.card_container}
         aria-labelledby={`alert-title-${id}`}
       >
-        {/* imagen del mapa */}
+        {/* imagen del mapa o fallback con imagen por categoría */}
         <div className={styles.thumb}>
           {mapImage ? (
             <img src={mapImage} alt="Miniatura de la ubicación" />
+          ) : alertImage ? (
+            <img src={alertImage} alt={`Imagen de ${category}`} />
           ) : (
             <div className={styles.placeholder} aria-hidden="true">
               Mapa

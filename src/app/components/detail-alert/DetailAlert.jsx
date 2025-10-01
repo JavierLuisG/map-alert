@@ -2,12 +2,28 @@
 
 import React from "react";
 import styles from "./page.module.css";
+import { alertImages } from "../../../utils/alertImages";
 
 const DetailAlert = ({ alert }) => {
+  const imageSrc =
+    alert.mapImage ||
+    alertImages[alert.category?.toLowerCase()] ||
+    "/images/alerts/otro.jpg";
+
   return (
-    <div className={styles.scroll_container}>
-      <div className={styles.title_container}>
-        <h1>
+    <div className={styles.detail_container}>
+      {/* Imagen superior */}
+      <div className={styles.image_wrapper}>
+        <img
+          src={imageSrc}
+          alt={alert.category || "Alerta"}
+          className={styles.image}
+        />
+      </div>
+
+      {/* Encabezado */}
+      <div className={styles.header}>
+        <h1 className={styles.title}>
           {alert.category
             ? alert.category.charAt(0).toUpperCase() + alert.category.slice(1)
             : "Alerta"}
@@ -15,40 +31,67 @@ const DetailAlert = ({ alert }) => {
         <p className={styles.description}>{alert.description}</p>
       </div>
 
-      <dl className={styles.detail_list}>
-        <dt>Dirección</dt>
-        <dd>{alert.address || "-"}</dd>
+      {/* Lista de detalles */}
+      <div className={styles.detail_list}>
+        <div className={styles.row}>
+          <span className={styles.label}>Dirección</span>
+          <span className={styles.value}>{alert.address || "-"}</span>
+        </div>
 
-        <dt>Calle</dt>
-        <dd>{alert.street || "-"}</dd>
+        <div className={styles.row}>
+          <span className={styles.label}>Calle</span>
+          <span className={styles.value}>{alert.street || "-"}</span>
+        </div>
 
-        <dt>Barrio</dt>
-        <dd>{alert.neighborhood || "-"}</dd>
+        <div className={styles.row}>
+          <span className={styles.label}>Barrio</span>
+          <span className={styles.value}>{alert.neighborhood || "-"}</span>
+        </div>
 
-        <dt>Ciudad</dt>
-        <dd>{alert.city || "-"}</dd>
+        <div className={styles.row}>
+          <span className={styles.label}>Ciudad</span>
+          <span className={styles.value}>{alert.city || "-"}</span>
+        </div>
 
-        <dt>Departamento</dt>
-        <dd>{alert.department || "-"}</dd>
+        <div className={styles.row}>
+          <span className={styles.label}>Departamento</span>
+          <span className={styles.value}>{alert.department || "-"}</span>
+        </div>
 
-        <dt>País</dt>
-        <dd>{alert.country || "-"}</dd>
+        <div className={styles.row}>
+          <span className={styles.label}>País</span>
+          <span className={styles.value}>{alert.country || "-"}</span>
+        </div>
 
-        <dt>Prioridad</dt>
-        <dd>{alert.priority || "-"}</dd>
+        <div className={styles.row}>
+          <span className={styles.label}>Prioridad</span>
+          <span
+            className={`${styles.value} ${styles.priority} ${
+              styles[alert.priority?.toLowerCase()]
+            }`}
+          >
+            {alert.priority || "-"}
+          </span>
+        </div>
 
-        <dt>Coordenadas</dt>
-        <dd>
-          {alert.coordinates
-            ? `${alert.coordinates.lat}, ${alert.coordinates.lng}`
-            : "-"}
-        </dd>
+        <div className={styles.row}>
+          <span className={styles.label}>Coordenadas</span>
+          <span className={styles.value}>
+            {alert.coordinates
+              ? `${alert.coordinates.lat}, ${alert.coordinates.lng}`
+              : "-"}
+          </span>
+        </div>
 
-        <dt>Creada</dt>
-        <dd>
-          {alert.createdAt ? new Date(alert.createdAt).toLocaleString() : "-"}
-        </dd>
-      </dl>
+        <div className={styles.row}>
+          <span className={styles.label}>Creada</span>
+          <span className={styles.value}>
+            {alert.createdAt
+              ? new Date(alert.createdAt).toLocaleString()
+              : "-"}
+          </span>
+        </div>
+      </div>
     </div>
   );
 };
